@@ -1,0 +1,11 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "app.js",
+  "repository": "https://github.com/PR-1301/Dev_Tracker.git",
+  "author": "PR",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
