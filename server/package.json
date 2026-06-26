@@ -6,6 +6,8 @@
   "author": "PR",
   "license": "MIT",
   "dependencies": {
-    "express": "^5.2.1"
+    "@prisma/client": "^7.8.0",
+    "express": "^5.2.1",
+    "prisma": "^7.8.0"
   }
 }

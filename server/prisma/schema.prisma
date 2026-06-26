@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Platform {
+  LEETCODE
+  CODEFORCES
+  CODECHEF
+  ATCODER
+  GFG
+  HACKERRANK
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum ProblemStatus {
+  SOLVED
+  ATTEMPTED
+}
+
+model User {
+  id               String           @id @default(cuid())
+  github_id        String           @unique
+  username         String           @unique
+  full_name        String?
+  email            String           @unique
+  avatar_url       String?
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @updatedAt
+  platformAccounts PlatformAccount[]
+  codingStats      CodingStats[]
+  userProblems     UserProblem[]
+  ratingHistory    RatingHistory[]
+}
+
+model PlatformAccount {
+  id          Int       @id @default(autoincrement())
+  user_id     String
+  platform    Platform
+  handle      String
+  profile_url String
+  avatar_url  String?
+  is_verified Boolean   @default(false)
+  last_synced DateTime?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, platform])
+}
+
+model CodingStats {
+  id                Int      @id @default(autoincrement())
+  user_id           String
+  platform          Platform
+  rating            Int?
+  rank              Int?
+  easy_solved       Int      @default(0)
+  medium_solved     Int      @default(0)
+  hard_solved       Int      @default(0)
+  total_solved      Int      @default(0)
+  total_active      Int      @default(0)
+  contests_attended Int      @default(0)
+  max_rating        Int?
+  current_streak    Int?
+  last_synced       DateTime
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, platform])
+}
+
+model UserProblem {
+  id         Int           @id @default(autoincrement())
+  user_id    String
+  platform   Platform
+  prob_id    String
+  title      String
+  difficulty Difficulty
+  tags       String[]
+  status     ProblemStatus
+  solved_at  DateTime?
+  created_at DateTime      @default(now())
+  updated_at DateTime      @updatedAt
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, platform, prob_id])
+}
+
+model RatingHistory {
+  id            Int      @id @default(autoincrement())
+  user_id       String
+  platform      Platform
+  contest_id    String?
+  contest_name  String
+  old_rating    Int?
+  new_rating    Int
+  rating_change Int
+  rank          Int?
+  participants  Int?
+  contest_date  DateTime
+  created_at    DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, platform])
+}
